@@ -23,14 +23,67 @@ body {
     padding: 15px 50px;
 }
 
-div {
-    border: 1px solid #636363;
-}
 
 .foot {
     font-size: 10px;
     display: flex;
-    padding: 5px 15px;
+    padding: 25px 15px 0 15px;
     justify-content: flex-end;
 }
 
+
+
+.torso {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px solid #626567;
+    border-radius: 20px;
+}
+
+.arm {
+    flex-grow: 1;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    height: calc(20% - 1px);
+    border-bottom: 1px solid #626567;
+}
+.cell {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-left: 1px solid #626567;
+
+}
+
+.torsoHolderHolder{
+    flex-grow: 2;
+}
+
+.torsoHolder{
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+}
+
+.torso div:last-child {
+    border-bottom: none;
+}
+
+.row div:first-child{
+    border-left: none;
+}
+
+.cell img{
+    width: 60%;
+}
