@@ -86,4 +86,20 @@ body {
 
 .cell img{
     width: 60%;
+    animation-duration: 0.4s;
+    animation-name: appear;
+    animation-timing-function: ease-in;
 }
+
+@keyframes appear {
+    from{
+        opacity: 0;
+        transform: rotate(180deg);
+        width: 600%;
+    }
+    to{
+        opacity: 1;
+        transform: rotate(0deg);
+        width: 60%;
+    }
+         }

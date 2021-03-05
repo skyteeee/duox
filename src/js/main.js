@@ -1,5 +1,5 @@
 function init() {
-    createField(5)
+    createField(10)
 }
 
 window.addEventListener("load", init);
