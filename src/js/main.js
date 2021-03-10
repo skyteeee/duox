@@ -1,5 +1,5 @@
 function init() {
-    createField(10)
+    createField(5)
 }
 
 window.addEventListener("load", init);
@@ -50,6 +50,15 @@ function updateFieldHTML() {
 
 function flipTurn() {
     data.turn = (data.turn+1) % 2;
+    let rightArm = document.getElementById("rightArm");
+    let leftArm = document.getElementById("leftArm");
+    if (data.turn===1) {
+        leftArm.className = "arm leftArm active";
+        rightArm.className = "arm rightArm inactive";
+    } else {
+        leftArm.className = "arm leftArm inactive";
+        rightArm.className = "arm rightArm active";
+    }
 }
 
 function setCellContent(x, y) {
