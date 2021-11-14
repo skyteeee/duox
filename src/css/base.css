@@ -170,6 +170,7 @@ body {
 
 .row {
     display: flex;
+    flex-grow: 1;
     flex-direction: row;
     height: calc(20% - 1px);
     border-bottom: 1px solid #626567;
