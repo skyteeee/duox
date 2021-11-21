@@ -7,6 +7,7 @@ function initGame (fieldSize, toWin) {
     data.toWin = toWin;
     data.fieldSize = fieldSize;
     data.turn = 1;
+    data.score = [0,0];
 }
 
 window.addEventListener("load", init);
@@ -16,6 +17,7 @@ let data = {
     turn:1,
     toWin:3,
     fieldSize:3,
+    score:[0,0],
 };
 
 function createField(fieldSize) {
@@ -71,10 +73,34 @@ function flipTurn() {
 function setCellContent(x, y) {
     if (data.gameField[y][x].content === null) {
         data.gameField[y][x].content = data.turn;
-        flipTurn();
         updateFieldContents();
         let matches = checkForWin(x, y);
-        console.log(`Found ${matches} matches`);
+        if (matches.length !== 0) {
+            clearCells(matches);
+            increaseScore(matches.length);
+        }
+        flipTurn();
+    }
+}
+
+function increaseScore (cellAmount) {
+    data.score[data.turn] += cellAmount * 10 + (cellAmount - data.toWin) * 20;
+    document.getElementById(`score-${data.turn}`).innerText = data.score[data.turn];
+}
+
+function clearCells(cells) {
+    let time = 500;
+    for (let cell of cells) {
+        setTimeout(() => {
+            let img = document.getElementById(`img-${cell.x}-${cell.y}`);
+            img.className = "dying";
+            setTimeout(() => {
+                data.gameField[cell.y][cell.x].content = null;
+                updateFieldContents();
+            }, 400);
+        },
+            time);
+        time += 100;
     }
 }
 
@@ -82,29 +108,36 @@ function checkForWin (x, y) {
     x = parseInt(x, 10);
     y = parseInt(y, 10);
     for (let vector of [{x:1, y:0}, {x:0, y:1}, {x:1, y:1}, {x:-1, y:1}]) {
-        let counter = 1;
-        counter += countMatches(x, y, vector.x, vector.y);
-        counter += countMatches(x, y, -vector.x, -vector.y);
-        if (counter >= data.toWin) {
-            return counter;
+        let coordinates = [];
+        coordinates.push(...countMatches(x, y, vector.x, vector.y));
+        coordinates.push({x,y});
+        coordinates.push(...countMatches(x, y, -vector.x, -vector.y));
+        if (coordinates.length >= data.toWin) {
+            return coordinates.sort((a, b) => {
+                let xChange = a.x - b.x;
+                if (xChange === 0) {
+                    return a.y - b.y;
+                }
+                return xChange;
+            });
         }
     }
-    return 0;
+    return [];
 }
 
 function countMatches (startX, startY, xStep, yStep) {
-    let counter = 0;
+    let coordinates = [];
     let ox = data.gameField[startY][startX].content;
     let x = startX + xStep;
     let y = startY + yStep;
     while (x < data.fieldSize && x >= 0
         && y < data.fieldSize && y >= 0
         && data.gameField[y][x].content === ox) {
-        counter ++;
+        coordinates.push({x, y});
         x += xStep;
         y += yStep;
     }
-    return counter;
+    return coordinates;
 }
 
 function updateFieldContents() {
@@ -112,11 +145,15 @@ function updateFieldContents() {
         let row = data.gameField[rowIdx];
         for (let cellIdx in row) {
             let cell = row[cellIdx];
-            if (cell.content === 0 && !document.getElementById(`img-${cellIdx}-${rowIdx}`)){
+            let imgHTML = document.getElementById(`img-${cellIdx}-${rowIdx}`);
+            let cellHTML = document.getElementById(`${cellIdx}-${rowIdx}`);
 
-                let cellHTML = document.getElementById(`${cellIdx}-${rowIdx}`);
+            if (cell.content === null && imgHTML) {
                 cellHTML.innerHTML="";
+            }
 
+            if (cell.content === 0 && !imgHTML){
+                cellHTML.innerHTML="";
                 let img = document.createElement("img");
                 img.src = "img/green_circle.png";
                 img.alt = "O";
@@ -125,11 +162,8 @@ function updateFieldContents() {
 
             } else {
 
-                if (cell.content===1 && !document.getElementById(`img-${cellIdx}-${rowIdx}`)) {
-
-                    let cellHTML = document.getElementById(`${cellIdx}-${rowIdx}`);
+                if (cell.content===1 && !imgHTML) {
                     cellHTML.innerHTML="";
-
                     let img = document.createElement("img");
                     img.src = "img/red_cross.png";
                     img.alt = "X";

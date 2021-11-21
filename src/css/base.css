@@ -49,7 +49,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     border: 1px solid #626567;
     padding-top: 5%;
 }
@@ -87,6 +87,12 @@ body {
     animation-timing-function: ease-out;
 }
 
+.turnIndicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 @keyframes inactiveImg {
     from {
         width: 50%;
@@ -99,7 +105,20 @@ body {
     }
 }
 
-.arm.inactive .text{
+.score {
+    font-size: 50px;
+    padding-bottom: 25px;
+}
+
+.active .score {
+    opacity: 1;
+}
+
+.inactive .score {
+    opacity: 0.25;
+}
+
+.arm.inactive .text {
     opacity: 0;
     animation-name: inactiveTxt;
     animation-duration: 0.5s;
@@ -138,7 +157,7 @@ body {
     }
 }
 
-.arm.active .text{
+.arm.active .text {
     opacity: 1;
     animation-name: activeTxt, textIdle;
     animation-duration: 0.5s, 3s;
@@ -186,11 +205,11 @@ body {
 
 }
 
-.torsoHolderHolder{
+.torsoHolderHolder {
     flex-grow: 2;
 }
 
-.torsoHolder{
+.torsoHolder {
     position: relative;
     width: 100%;
     padding-top: 100%;
@@ -200,11 +219,29 @@ body {
     border-bottom: none;
 }
 
-.row div:first-child{
+.row div:first-child {
     border-left: none;
 }
 
-.cell img{
+.cell img.dying {
+    width: 0;
+    animation-name: die;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-in;
+}
+
+@keyframes die {
+    from {
+        transform: rotate(0deg);
+        width: 60%;
+    }
+    to {
+        transform: rotate(180deg);
+        width: 0;
+    }
+}
+
+.cell img {
     width: 60%;
     animation-duration: 0.4s;
     animation-name: appear;
