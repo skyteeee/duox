@@ -2,18 +2,52 @@ function init() {
     initGame(5, 4);
 }
 
+function getContentCells () {
+    let cells = [];
+    for (let y in data.gameField) {
+        for (let x in data.gameField[y]) {
+            if (data.gameField[y][x].content !== null) {
+                cells.push({x,y});
+            }
+        }
+    }
+    return cells;
+}
+
+function hideGameOver () {
+    let holder = document.getElementById("gameInfoHolder");
+    holder.className = "gameInfoHolder hiding";
+    setTimeout(() => {
+        holder.className = "gameInfoHolder hidden"
+    }, 1300)
+}
+
+function showGameOver () {
+    document.getElementById("gameInfoHolder").className = "gameInfoHolder";
+    let winner = data.score[0] > data.score[1] ? 0 : (data.score[0] < data.score[1] ? 1 : null);
+    document.getElementById("winner").innerText = winner === null ? "Draw" : `Winner: ${winner === 0 ? "O" : "X"}`;
+    document.getElementById("finalScore").innerText = `Score: ${winner === 1 ? data.score[1] : data.score[0]}`
+}
+
 function initGame (fieldSize, toWin) {
-    createField(fieldSize);
+    if (data.gameField === null) {
+        createField(fieldSize);
+    } else {
+        clearCells(getContentCells());
+        hideGameOver();
+    }
     data.toWin = toWin;
     data.fieldSize = fieldSize;
     data.turn = 1;
     data.score = [0,0];
+    updateScore();
+    setArms();
 }
 
 window.addEventListener("load", init);
 
 let data = {
-    gameField:[],
+    gameField:null,
     turn:1,
     toWin:3,
     fieldSize:3,
@@ -59,6 +93,10 @@ function updateFieldHTML() {
 
 function flipTurn() {
     data.turn = (data.turn+1) % 2;
+    setArms();
+}
+
+function setArms () {
     let rightArm = document.getElementById("rightArm");
     let leftArm = document.getElementById("leftArm");
     if (data.turn===1) {
@@ -78,14 +116,34 @@ function setCellContent(x, y) {
         if (matches.length !== 0) {
             clearCells(matches);
             increaseScore(matches.length);
+        } else {
+            if (isGameOver()) {
+                showGameOver();
+            }
         }
         flipTurn();
     }
 }
 
+function isGameOver () {
+    for (let row of data.gameField) {
+        for (let cell of row) {
+            if (cell.content === null) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 function increaseScore (cellAmount) {
     data.score[data.turn] += cellAmount * 10 + (cellAmount - data.toWin) * 20;
-    document.getElementById(`score-${data.turn}`).innerText = data.score[data.turn];
+    updateScore();
+}
+
+function updateScore () {
+    document.getElementById(`score-1`).innerText = data.score[1];
+    document.getElementById(`score-0`).innerText = data.score[0];
 }
 
 function clearCells(cells) {
